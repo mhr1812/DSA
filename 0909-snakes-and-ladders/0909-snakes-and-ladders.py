@@ -23,10 +23,9 @@ class Solution:
                     else:
                         nxt = arr[i]
                    
-                    if nxt in seen:
-                        continue
-                    seen.add(nxt)
-                    queue.append(nxt)
+                    if nxt not in seen:
+                        seen.add(nxt)
+                        queue.append(nxt)
             c+=1
         
         return -1 
