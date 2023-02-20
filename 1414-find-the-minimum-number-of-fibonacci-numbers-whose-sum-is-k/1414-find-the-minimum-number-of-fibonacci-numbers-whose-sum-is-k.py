@@ -7,7 +7,7 @@ class Solution:
         
         ans,l = 0,len(fib)-1
         
-        while k!=0:
+        while k>0:
             if fib[l]<=k:
                 k-=fib[l]
                 ans+=1
