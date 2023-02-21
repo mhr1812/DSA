@@ -5,11 +5,11 @@ class Solution:
         queue.append(source)
         visited = set()
         visited.add(source)
-        graph = defaultdict(set)
+        graph = defaultdict(list)
 
         for i,j in edges:
-            graph[i].add(j)
-            graph[j].add(i)
+            graph[i].append(j)
+            graph[j].append(i)
 
         while queue:
             curr = queue.pop(0)
