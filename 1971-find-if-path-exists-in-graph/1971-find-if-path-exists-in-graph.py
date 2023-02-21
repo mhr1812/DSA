@@ -1,7 +1,7 @@
 class Solution:
     def validPath(self, n: int, edges: List[List[int]], source: int, destination: int) -> bool:
         
-        queue = []
+        queue = deque()
         queue.append(source)
         visited = set()
         visited.add(source)
@@ -12,7 +12,7 @@ class Solution:
             graph[j].append(i)
 
         while queue:
-            curr = queue.pop(0)
+            curr = queue.popleft()
             if curr==destination:
                 return True
 
