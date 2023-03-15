@@ -1,6 +1,3 @@
 class Solution:
     def distinctIntegers(self, n: int) -> int:
-        if n==1:
-            return 1
-        else:
-            return n-1
+        return max(n-1,1)
