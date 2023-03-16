@@ -1,10 +1,12 @@
 class Solution:
     def maxKelements(self, nums: List[int], k: int) -> int:
-        ans = 0
-        nums.sort()
+        nums = [-i for i in nums]
+        heapify(nums)
+        
+        res = 0
         for i in range(k):
-            t = nums.pop()
-            ans += t
-            x = ceil(t/3)
-            nums.insert(bisect.bisect(nums,x),x)
-        return ans
+            t = -heappop(nums)
+            res += t
+            heappush(nums, -ceil(t / 3))
+        
+        return res
