@@ -1,17 +1,16 @@
 class Solution:
     def maximumCostSubstring(self, s: str, chars: str, vals: List[int]) -> int:
-        a = []
-        for i in range(len(s)):
-            if s[i] in chars:
-                a.append(vals[chars.index(s[i])])
-            else:
-                a.append(ord(s[i])-96)
+        d = defaultdict(int)
+        for i,j in enumerate(chars):
+            d[j] = i
         sum1,ans = 0,-1
         for i in range(len(s)):
-            sum1+=a[i]
-            sum1 = max(sum1,a[i])
+            if s[i] in d:
+                sum1+=vals[d[s[i]]]
+            else:
+                sum1+=ord(s[i])-96
+            if sum1<0:
+                sum1 = 0
             ans = max(ans,sum1)
-        if ans<0:
-            return 0
         return ans
             
