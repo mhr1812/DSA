@@ -7,10 +7,13 @@ class Solution:
         for i in range(len(s)):
             if s[i] in d:
                 sum1+=vals[d[s[i]]]
+                sum1 = max(sum1,vals[d[s[i]]])
             else:
                 sum1+=ord(s[i])-96
-            if sum1<0:
-                sum1 = 0
+                sum1 = max(sum1,ord(s[i])-96)
+            
             ans = max(ans,sum1)
+        if ans<0:
+            return 0
         return ans
             
