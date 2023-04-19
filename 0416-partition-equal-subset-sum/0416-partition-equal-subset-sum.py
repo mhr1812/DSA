@@ -1,25 +1,31 @@
 class Solution:
     def canPartition(self, nums: List[int]) -> bool:
-        def subsetSum(arr,sum):
-            n = len(arr)
-            t = [[-1 for j in range(sum+1)]for i in range(n+1)]    
-            for j in range(sum+1):
-                t[0][j] = False
-            for i in range(n+1):
-                t[i][0] = True
-            for i in range(1,n+1):
-                for j in range(1,sum+1):
-                    if arr[i-1]<=j:
-                        t[i][j] = t[i-1][j-arr[i-1]] or t[i-1][j]
-                    else:
-                        t[i][j] = t[i-1][j]
-            return t[n][sum]
+        # Calculate the total sum of the input array
+        total_sum = sum(nums)
         
-        sm = sum(nums)
-        if sm%2==1:
+        # If the total sum is odd, we cannot partition the array into two equal sum subsets
+        if total_sum % 2 == 1:
             return False
-        else:
-            return subsetSum(nums,sm//2)
+        
+        # Calculate the target sum for each subset
+        target_sum = total_sum // 2
+        
+        # Initialize a boolean list of size target_sum+1 to keep track of whether a sum can be formed using the input array
+        dp = [False] * (target_sum+1)
+        
+        # We can always form a sum of 0 using the input array
+        dp[0] = True
+        
+        # Loop through each element in the input array
+        for num in nums:
+            # Starting from the target sum, loop backwards through the dp list
+            for j in range(target_sum, num-1, -1):
+                # If we can form a sum j-num using the previous elements in the input array,
+                # we can also form a sum j using the current element
+                dp[j] = dp[j] or dp[j-num]
+        
+        # Return whether or not we can form a sum of target_sum using the input array
+        return dp[target_sum]
         
         
             
