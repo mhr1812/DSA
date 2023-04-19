@@ -12,6 +12,12 @@ class Solution:
             node,n,dir = a.pop()
             if node:
                 ans= max(ans,n)
-                a.append((node.left,1 if dir else n+1,1))
-                a.append((node.right,n+1 if dir else 1,0))
+                if dir:
+                    a.append((node.left,1,1))
+                    a.append((node.right,n+1,0))
+                else:
+                    a.append((node.left,n+1,1))
+                    a.append((node.right,1,0))
+                # a.append((node.left,1 if dir else n+1,1))
+                # a.append((node.right,n+1 if dir else 1,0))
         return ans
