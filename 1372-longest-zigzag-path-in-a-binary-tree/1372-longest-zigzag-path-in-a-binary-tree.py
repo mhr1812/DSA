@@ -6,7 +6,7 @@
 #         self.right = right
 class Solution:
     def longestZigZag(self, root: Optional[TreeNode]) -> int:
-        a = [(root,0,None)]
+        a = [(root,0,0)]
         ans = 0
         while a:
             node,n,dir = a.pop()
