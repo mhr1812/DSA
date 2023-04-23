@@ -2,21 +2,17 @@ mod = int(1e9+7)
 class Solution:
     def numberOfArrays(self, s: str, k: int) -> int:
         n = len(s)
-        t = [-1 for i in range(n)]
-        def recur(s,k,i):
-            if i==n:
-                return 1
-            if s[i]=='0':
-                return 0
-            if t[i]!=-1:
-                return t[i]
-            ans,num = 0,0
-            for j in range(i,n):
-                num = 10*num + int(s[j]) 
-                if num>k:
-                    break
-                ans=(ans+recur(s,k,j+1))%mod
-            t[i] = ans
-            return ans
+        dp = [0] * (n + 1)
+        dp[-1] = 1
         
-        return recur(s,k,0)
+        for i in range(n - 1, -1, -1):
+            if s[i] == '0':
+                continue
+            num = 0
+            j = i
+            while j < n and int(s[i:j+1]) <= k:
+                num += dp[j+1]
+                j += 1
+            dp[i] = num % (10 ** 9 + 7)
+        
+        return dp[0]
