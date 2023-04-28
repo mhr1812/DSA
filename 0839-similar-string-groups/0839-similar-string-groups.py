@@ -1,4 +1,4 @@
-from collections import deque
+#from collections import deque
 class Solution:
     def numSimilarGroups(self, strs: List[str]) -> int:
         def is_similar(a,b):
