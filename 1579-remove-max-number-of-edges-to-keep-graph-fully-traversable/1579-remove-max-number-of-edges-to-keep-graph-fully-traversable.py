@@ -1,36 +1,49 @@
-def find(reps, u):
-    if reps[u] == -1:
-        return u
-    reps[u] = find(reps, reps[u])
-    return reps[u]
-
-def union(reps, u, v):
-    rep_u = find(reps, u)
-    rep_v = find(reps, v)
-    if rep_u != rep_v:
-        reps[rep_u] = rep_v
+class DSU:
+    def __init__(self, n):
+        self.parent = [i for i in range(n)]
+        self.rank = [0] * n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        xset, yset = self.find(x), self.find(y)
+        if xset != yset:
+            if self.rank[xset] < self.rank[yset]:
+                self.parent[xset] = yset
+            elif self.rank[xset] > self.rank[yset]:
+                self.parent[yset] = xset
+            else:
+                self.parent[xset] = yset
+                self.rank[yset] += 1
+            return True
+        return False
 
 class Solution:
     def maxNumEdgesToRemove(self, n: int, edges: List[List[int]]) -> int:
-        m3 = 0 # number of type 3 edges added
-        reps = [-1] * (n + 1)
-        for t, u, v in edges:
-            if t == 3 and find(reps, u) != find(reps, v):
-                union(reps, u, v)
-                m3 += 1
-        
-        m1 = 0 # number of type 1 edges added
-        m2 = 0 # number of type 2 edges added
-        reps2 = reps.copy()
-        for t, u, v in edges:
-            if t == 1 and find(reps, u) != find(reps, v):
-                union(reps, u, v)
-                m1 += 1
-            elif t == 2 and find(reps2, u) != find(reps2, v):
-                union(reps2, u, v)
-                m2 += 1
-        
-        if m1 + m3 != n - 1 or m2 + m3 != n - 1:
-            return -1
-        
-        return len(edges) - (m1 + m2 + m3)
+        edges.sort(reverse=True)
+        dsu_alice = DSU(n+1)
+        dsu_bob = DSU(n+1)
+        removed_edge = 0
+        alice_edges, bob_edges = 0, 0
+        for edge in edges:
+            if edge[0] == 3:
+                if dsu_alice.union(edge[1], edge[2]):
+                    dsu_bob.union(edge[1], edge[2])
+                    alice_edges += 1
+                    bob_edges += 1
+                else:
+                    removed_edge += 1
+            elif edge[0] == 2:
+                if dsu_bob.union(edge[1], edge[2]):
+                    bob_edges += 1
+                else:
+                    removed_edge += 1
+            else:
+                if dsu_alice.union(edge[1], edge[2]):
+                    alice_edges += 1
+                else:
+                    removed_edge += 1
+        return removed_edge if bob_edges == n - 1 == alice_edges else -1
