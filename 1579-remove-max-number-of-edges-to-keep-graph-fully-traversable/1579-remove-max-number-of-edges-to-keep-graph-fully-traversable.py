@@ -1,49 +1,60 @@
-class DSU:
-    def __init__(self, n):
-        self.parent = [i for i in range(n)]
-        self.rank = [0] * n
-    
-    def find(self, x):
-        if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])
-        return self.parent[x]
-    
-    def union(self, x, y):
-        xset, yset = self.find(x), self.find(y)
-        if xset != yset:
-            if self.rank[xset] < self.rank[yset]:
-                self.parent[xset] = yset
-            elif self.rank[xset] > self.rank[yset]:
-                self.parent[yset] = xset
-            else:
-                self.parent[xset] = yset
-                self.rank[yset] += 1
-            return True
-        return False
-
 class Solution:
-    def maxNumEdgesToRemove(self, n: int, edges: List[List[int]]) -> int:
-        edges.sort(reverse=True)
-        dsu_alice = DSU(n+1)
-        dsu_bob = DSU(n+1)
-        removed_edge = 0
-        alice_edges, bob_edges = 0, 0
-        for edge in edges:
-            if edge[0] == 3:
-                if dsu_alice.union(edge[1], edge[2]):
-                    dsu_bob.union(edge[1], edge[2])
-                    alice_edges += 1
-                    bob_edges += 1
-                else:
-                    removed_edge += 1
-            elif edge[0] == 2:
-                if dsu_bob.union(edge[1], edge[2]):
-                    bob_edges += 1
-                else:
-                    removed_edge += 1
+
+    def dfs(self,vis,li,com,i):
+        if(vis[i]):return 0
+        vis[i]=com
+        ans=1
+        for j in li[i]:
+            ans+=self.dfs(vis,li,com,j)
+        return ans
+
+    def maxNumEdgesToRemove(self, n: int, e: List[List[int]]) -> int:
+        ans=0
+        li=[[] for i in range(n)]
+        for l in e:
+            if(l[0]==3):
+                li[l[1]-1].append(l[2]-1)
+                li[l[2]-1].append(l[1]-1)
+        vis=[0 for i in range(n)]
+        com=0
+        for i in range(n):
+            if(vis[i]):continue
             else:
-                if dsu_alice.union(edge[1], edge[2]):
-                    alice_edges += 1
-                else:
-                    removed_edge += 1
-        return removed_edge if bob_edges == n - 1 == alice_edges else -1
+                com+=1
+                temp=self.dfs(vis,li,com,i)
+                ans+=(temp-1)
+        lia=[[] for i in range(com)]
+        lib=[[] for i in range(com)]
+        for l in e:
+            if(l[0]==1):
+                a=vis[l[1]-1]-1
+                b=vis[l[2]-1]-1
+                if(a==b):continue
+                lia[a].append(b)
+                lia[b].append(a)
+            elif(l[0]==2):
+                a=vis[l[1]-1]-1
+                b=vis[l[2]-1]-1
+                if(a==b):continue
+                lib[a].append(b)
+                lib[b].append(a)
+        visa=[0 for i in range(com)]
+        coma=0
+        comb=0
+        for i in range(com):
+            if(visa[i]):continue
+            else:
+                coma+=1
+                if(coma>1):return -1
+                self.dfs(visa,lia,coma,i)
+        
+        visb=[0 for i in range(com)]
+        for i in range(com):
+            if(visb[i]):continue
+            else:
+                comb+=1
+                if(comb>1):return -1
+                self.dfs(visb,lib,comb,i)
+        if(coma>1 or comb>1):return -1
+        ans+=(com-1)*2
+        return len(e)-ans
