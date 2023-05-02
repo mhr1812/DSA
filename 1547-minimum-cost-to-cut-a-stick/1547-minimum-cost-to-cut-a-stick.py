@@ -1,21 +1,27 @@
 class Solution:
     def minCost(self, n: int, cuts: List[int]) -> int:
-        def f(i,j,dp):
-            if i>j:
-                return 0
-            if dp[i][j]!=-1:
-                return dp[i][j]
-            mini=float('inf')
-            for ind in range(i,j+1):
-                cost=cuts[j+1]-cuts[i-1]+f(i,ind-1,dp)+f(ind+1,j,dp)
-                mini=min(mini,cost)
-            dp[i][j]=mini
-            return dp[i][j]
-               
-        c=len(cuts)
-        dp=[[-1 for _ in range(c+1)]for _ in range(c+1)]
-        cuts.append(n)
-        cuts.insert(0,0)
         cuts.sort()
-        return f(1,c,dp)
+        A = [0] + cuts + [n]
+        
+        def dfs(i, j, A, dp):
+            if i > j:
+                return 0
+			# check the memoization cache
+            if dp[i][j] != -1:
+                return dp[i][j]
+            
+            mini = float("inf")
+            for k in range(i, j+1):
+                cost = A[j+1]-A[i-1] + dfs(i, k-1, A, dp) + dfs(k+1, j, A, dp)
+                mini = min(cost, mini)
+            
+			# set the computed value so we don't have to recompute
+            dp[i][j] = mini
+            return mini
+                
+		# build our len(cuts)*len(cuts) 2D array cache
+        dp = [[-1 for j in range(len(cuts)+1)] for i in range(len(cuts)+1)]
+        
+        res = dfs(1, len(cuts), A, dp)
+        return res
         
