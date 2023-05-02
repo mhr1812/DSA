@@ -1,9 +1,21 @@
 class Solution:
     def minCost(self, n: int, cuts: List[int]) -> int:
-        memo = {}
-        def t(l,r):
-            if (l,r) not in memo:
-                memo[l,r] = min([t(l,cut) + t(cut,r) + (r-l) for cut in cuts if l<cut<r] or [0])
-            return memo[l,r]
-        return t(0,n)
+        def f(i,j,dp):
+            if i>j:
+                return 0
+            if dp[i][j]!=-1:
+                return dp[i][j]
+            mini=float('inf')
+            for ind in range(i,j+1):
+                cost=cuts[j+1]-cuts[i-1]+f(i,ind-1,dp)+f(ind+1,j,dp)
+                mini=min(mini,cost)
+            dp[i][j]=mini
+            return dp[i][j]
+               
+        c=len(cuts)
+        dp=[[-1 for _ in range(c+1)]for _ in range(c+1)]
+        cuts.append(n)
+        cuts.insert(0,0)
+        cuts.sort()
+        return f(1,c,dp)
         
