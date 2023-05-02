@@ -1,5 +1,4 @@
 class Solution:
     def arraySign(self, nums: List[int]) -> int:
-        product = math.prod(nums)
-        return 1 if product > 0 else -1 if product < 0 else 0
+        return 0 if 0 in nums else reduce(mul, [-1 if num < 0 else 1 for num in nums])
         
