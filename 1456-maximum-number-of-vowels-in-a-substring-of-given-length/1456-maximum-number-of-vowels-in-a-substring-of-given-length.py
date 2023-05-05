@@ -7,8 +7,10 @@ class Solution:
                 curr+=1
         ans = curr
         for i in range(n-k):
-            old = 1 if s[i] in {'a','e','i','o','u'}  else 0 
-            new = 1 if s[i+k] in {'a','e','i','o','u'} else 0 
-            curr = curr-old+new
+            if s[i] in {'a','e','i','o','u'}:
+                curr-=1
+            if s[i+k] in {'a','e','i','o','u'}:
+                curr+=1
+            #curr = curr-old+new
             ans = max(ans,curr)
         return ans
