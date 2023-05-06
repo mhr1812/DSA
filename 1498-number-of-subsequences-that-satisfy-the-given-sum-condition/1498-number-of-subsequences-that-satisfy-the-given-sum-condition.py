@@ -3,28 +3,18 @@ class Solution:
     
         
     def numSubseq(self, nums: List[int], target: int) -> int:
-        n = len(nums)
-        low,high = 0,n-1
         nums.sort()
-        ans = 0
-        def power(a,b):
-            if b==0:
-                return 1
-            if b==1:
-                return a
-            ans = 0
-            if b%2==0:
-                ans = power(a,b//2)
-                ans*=ans
-            else:
-                ans = power(a,b-1)
-                ans*=a
-            return ans%m
-        while low<=high:
-            if nums[low]+nums[high]<=target:
-                ans+=power(2,high-low)
-                ans%=m
-                low+=1
-            else:
-                high-=1
-        return ans%m
+
+        total_cnts = 0
+        l, r = 0, len(nums) - 1
+
+        while l <= r and nums[l] <= target:
+            r = bisect_right(nums, target - nums[l], l, r + 1) - 1  # binary find end limit
+            if r < l: break  # end limit can not be found after start
+
+            # any subsequences starts from i and ends before j+1 will be valid
+            # so, it's like choose 01 bits from the rest possitions except start
+            total_cnts += 1 << r - l
+            l += 1
+
+        return total_cnts%m
