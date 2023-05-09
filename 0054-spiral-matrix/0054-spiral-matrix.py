@@ -1,21 +1,26 @@
 class Solution:
     def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
-        n,m = len(matrix[0]),len(matrix)
-        visited = [[False for j in range(n)]for i in range(m)]
-        ans = []
-        def recur(i,j):
-            visited[i][j] = True
-            ans.append(matrix[i][j])
-            if i-1<=j and j<n-1 and not visited[i][j+1]:
-                recur(i,j+1)
-            elif i<m-1 and not visited[i+1][j]:
-                recur(i+1,j)
-            elif j>0 and not visited[i][j-1]:
-                recur(i,j-1)
-            elif i>0 and not visited[i-1][j]:
-                recur(i-1,j)
-            else:
-                return None
-        recur(0,0)
-        return ans
+        res = []
+        if len(matrix) == 0:
+            return res
+        row_begin = 0
+        col_begin = 0
+        row_end = len(matrix)-1 
+        col_end = len(matrix[0])-1
+        while (row_begin <= row_end and col_begin <= col_end):
+            for i in range(col_begin,col_end+1):
+                res.append(matrix[row_begin][i])
+            row_begin += 1
+            for i in range(row_begin,row_end+1):
+                res.append(matrix[i][col_end])
+            col_end -= 1
+            if (row_begin <= row_end):
+                for i in range(col_end,col_begin-1,-1):
+                    res.append(matrix[row_end][i])
+                row_end -= 1
+            if (col_begin <= col_end):
+                for i in range(row_end,row_begin-1,-1):
+                    res.append(matrix[i][col_begin])
+                col_begin += 1
+        return res
             
