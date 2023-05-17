@@ -22,7 +22,7 @@ class Solution:
         second = prev
         first = head 
         ans = 0
-        while second:
+        while first and second:
             ans = max(ans,first.val+second.val)
             first = first.next 
             second = second.next
