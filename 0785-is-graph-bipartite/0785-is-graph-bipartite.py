@@ -7,7 +7,7 @@ class Solution:
                 return color[v]==curr
             
             color[v] = curr
-            return all(dfs(w, curr ^ 1) for w in graph[v])
+            return all(dfs(w, 1-curr) for w in graph[v])
         
         
         return all(dfs(v, 0) for v in range(len(graph)) if v not in color)
