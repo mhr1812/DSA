@@ -1,36 +1,37 @@
 class Solution:
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
-        hashmap = {}
-        for index, [left, right] in enumerate(equations):
-            value = values[index]
-            if left not in hashmap:
-                hashmap[left] = [(value, right)]
-            else:
-                hashmap[left].append((value, right))
-            if right not in hashmap:
-                hashmap[right] = [(1 / value, left)]
-            else:
-                hashmap[right].append((1 / value, left))
-		
-		# BFS keep replacing x till we reach a (num, y)
-        def solve(x, y):
-            if x not in hashmap or y not in hashmap:
-                return -1
-            visited = set()
-            q = deque([(1, x)])
-            visited.add(x)
-            while q:
-                (num, var) = q.pop()
-                if var == y:
-                    return num
-                replace_list = hashmap[var]
-                for (num_2, var_2) in replace_list:
-                    if var_2 not in visited:
-                        visited.add(var_2)
-                        q.append((num * num_2, var_2))
-            return -1
-
-        res = []
-        for query in queries:
-            res.append(solve(query[0], query[1]))
+        def bellman_ford(src, trg):
+            if src == trg:
+                return 1.
+            
+            V = len(vertices)
+            dist = {v: float('inf') for v in vertices}
+            dist[src] = 1.
+            
+            for i in range(V - 1):
+                for u, v, w in edges:
+                    dist[v] = min(dist[v], dist[u] * w)
+            
+            return dist[trg] if dist[trg] != float('inf') else -1.
+        
+        n = len(equations)
+        vertices = set()
+        edges = []
+        
+        for i in range(n):
+            a, b = equations[i]
+            val = values[i]
+            
+            vertices.add(a)
+            vertices.add(b)
+            
+            edges.append((a, b, val))
+            edges.append((b, a, 1 / val))
+        
+        res = [-1.] * len(queries)
+        for i, query in enumerate(queries):
+            c, d = query
+            if c in vertices and d in vertices:
+                res[i] = bellman_ford(c, d)
+        
         return res
