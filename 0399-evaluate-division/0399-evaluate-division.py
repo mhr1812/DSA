@@ -1,26 +1,38 @@
 class Solution:
-    def find(self, graph, start, end, res, visited):
-        if start == end:return res
-        if start in visited or start not in graph:return -1
-        visited[start]=1
-        for i in graph[start]:
-            temp = self.find(graph, i[0], end, res*i[1], visited)
-            if temp != -1: return temp   
-        return -1
-        
-    def search(self, graph, q):
-        start, end = q[0], q[1]
-        if start not in graph or end not in graph: return -1
-        return self.find(graph, start, end, 1, {})
-    
-    def calcEquation(self, equations, values, queries):
-        res, aList = [], collections.defaultdict(list)
-        
-        for eq,val in zip(equations,values):
-            aList[eq[0]].append((eq[1],val))
-            aList[eq[1]].append((eq[0],1/val))
-        
-        for q in queries:
-            res.append(self.search(aList,q))
-            
-        return res
+    def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
+        n = len(equations)
+        parents = dict()
+        def find(i):
+            if i not in parents:
+                parents[i] = i
+            if parents[i] != i:
+                parents[i] = find(parents[i])
+            return parents[i]
+        graph = defaultdict(dict)
+        for i in range(n):
+            a,b = equations[i]
+            graph[a][b] = values[i]
+            graph[b][a] = 1/values[i]
+
+            root_a = find(a); root_b = find(b)
+            parents[root_b] = root_a
+
+        def bfs(a, b):
+            que = deque([[a, 1]])
+            while que:
+                c_node, c_res = que.popleft()
+                if c_node == b:
+                    return c_res
+                for neigh, multiple in graph[c_node].items():
+                    que.append([neigh, c_res*multiple])
+
+        for i in range(len(queries)):
+            a,b = queries[i]
+            if a not in parents or b not in parents:
+                queries[i] = -1
+            elif find(a) != find(b):
+                queries[i] = -1
+            else:
+                queries[i] = bfs(a, b)
+
+        return queries
