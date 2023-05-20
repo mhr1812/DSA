@@ -1,38 +1,36 @@
 class Solution:
     def calcEquation(self, equations: List[List[str]], values: List[float], queries: List[List[str]]) -> List[float]:
-        n = len(equations)
-        parents = dict()
-        def find(i):
-            if i not in parents:
-                parents[i] = i
-            if parents[i] != i:
-                parents[i] = find(parents[i])
-            return parents[i]
-        graph = defaultdict(dict)
-        for i in range(n):
-            a,b = equations[i]
-            graph[a][b] = values[i]
-            graph[b][a] = 1/values[i]
-
-            root_a = find(a); root_b = find(b)
-            parents[root_b] = root_a
-
-        def bfs(a, b):
-            que = deque([[a, 1]])
-            while que:
-                c_node, c_res = que.popleft()
-                if c_node == b:
-                    return c_res
-                for neigh, multiple in graph[c_node].items():
-                    que.append([neigh, c_res*multiple])
-
-        for i in range(len(queries)):
-            a,b = queries[i]
-            if a not in parents or b not in parents:
-                queries[i] = -1
-            elif find(a) != find(b):
-                queries[i] = -1
+        hashmap = {}
+        for index, [left, right] in enumerate(equations):
+            value = values[index]
+            if left not in hashmap:
+                hashmap[left] = [(value, right)]
             else:
-                queries[i] = bfs(a, b)
+                hashmap[left].append((value, right))
+            if right not in hashmap:
+                hashmap[right] = [(1 / value, left)]
+            else:
+                hashmap[right].append((1 / value, left))
+		
+		# BFS keep replacing x till we reach a (num, y)
+        def solve(x, y):
+            if x not in hashmap or y not in hashmap:
+                return -1
+            visited = set()
+            q = deque([(1, x)])
+            visited.add(x)
+            while q:
+                (num, var) = q.pop()
+                if var == y:
+                    return num
+                replace_list = hashmap[var]
+                for (num_2, var_2) in replace_list:
+                    if var_2 not in visited:
+                        visited.add(var_2)
+                        q.append((num * num_2, var_2))
+            return -1
 
-        return queries
+        res = []
+        for query in queries:
+            res.append(solve(query[0], query[1]))
+        return res
