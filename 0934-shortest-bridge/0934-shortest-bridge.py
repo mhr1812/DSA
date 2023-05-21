@@ -1,37 +1,49 @@
 class Solution:
-    def dfs(self,x,y,m,n,grid,visited,lst):
-        visited[x][y]=1
-        lst.append([x,y,0])
-        row=[-1,1,0,0]
-        col=[0,0,-1,1]
-        for i in range(4):
-            if x+row[i]>=0 and x+row[i]<m and y+col[i]>=0 and y+col[i]<n and visited[x+row[i]][y+col[i]]==-1 and grid[x+row[i]][y+col[i]]==1:
-                self.dfs(x+row[i],y+col[i],m,n,grid,visited,lst)
-                
     def shortestBridge(self, grid: List[List[int]]) -> int:
-        m=len(grid)
-        n=len(grid[0])
-        visited=[[-1]*n for i in range(m)]
-        lst=[]
-        for i in range(m):
-            for j in range(n):
-                if visited[i][j]==-1 and grid[i][j]==1:
-                    self.dfs(i,j,m,n,grid,visited,lst)
+        # step-1, get all components of island 1
+        islandOne, q, visited = deque(), deque(), set()
+        for r in range( len(grid)):
+            for c in range( len(grid[0])):
+                if grid[r][c] == 1:
+                    islandOne.append([r, c])
+                    q.append([r, c])
+                    visited.add((r,c))
                     break
-            else:
-                continue
-            break
-        mn=float("infinity")
-        while lst:
-            x,y,d=lst.pop(0)
-            row=[-1,1,0,0]
-            col=[0,0,-1,1]
-            for i in range(4):
-                if x+row[i]>=0 and x+row[i]<m and y+col[i]>=0 and y+col[i]<n and visited[x+row[i]][y+col[i]]==-1:
-                    if grid[x+row[i]][y+col[i]]==1:
-                        mn=min(mn,d)
-                    else:
-                        lst.append([x+row[i],y+col[i],d+1])
-                        visited[x+row[i]][y+col[i]]=1
-        return mn
+            if len(islandOne) == 1:
+                break
+        
+        def isvalid(row, col):
+            if 0 <= row < len(grid) and 0 <= col < len(grid):
+                return True
+            return False
+
+        # make a BFS on the first land cell and get all cell in Islandone
+        while q:
+            size = len(q)
+            for _ in range(size):
+                row, col = q.popleft()
+                for r, c in [ [0, 1], [0, -1], [1, 0], [-1, 0]]:
+                    newRow, newCol = row + r, col + c
+                    if (newRow,newCol) not in visited and isvalid(newRow, newCol) and grid[newRow][newCol] == 1:
+                        q.append([newRow, newCol])
+                        islandOne.append([newRow, newCol])
+                        visited.add((newRow, newCol))
+        
+        # step-2, make BFS on islandOne until we get Island-2
+        numberOfMoves = 0
+        while islandOne:
+            size = len(islandOne)
+            for _ in range( size ):
+                row, col = islandOne.popleft()
+                for r, c in [[0, 1],[0, -1],[1, 0], [-1, 0]]:
+                    newRow, newCol = row + r, col + c
+
+                    if (newRow,newCol) not in visited and isvalid(newRow, newCol):
+                        # there are exactly 2 islands, so terminate here since Island-2 is found
+                        if grid[newRow][newCol] == 1:
+                            return numberOfMoves
+
+                        islandOne.append([newRow, newCol])
+                        visited.add((newRow, newCol))
+            numberOfMoves += 1
             
