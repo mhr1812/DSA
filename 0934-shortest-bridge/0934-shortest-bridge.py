@@ -1,49 +1,43 @@
 class Solution:
     def shortestBridge(self, grid: List[List[int]]) -> int:
-        # step-1, get all components of island 1
-        islandOne, q, visited = deque(), deque(), set()
-        for r in range( len(grid)):
-            for c in range( len(grid[0])):
-                if grid[r][c] == 1:
-                    islandOne.append([r, c])
-                    q.append([r, c])
-                    visited.add((r,c))
-                    break
-            if len(islandOne) == 1:
-                break
+        n = len(grid)
         
-        def isvalid(row, col):
-            if 0 <= row < len(grid) and 0 <= col < len(grid):
-                return True
-            return False
-
-        # make a BFS on the first land cell and get all cell in Islandone
-        while q:
-            size = len(q)
-            for _ in range(size):
-                row, col = q.popleft()
-                for r, c in [ [0, 1], [0, -1], [1, 0], [-1, 0]]:
-                    newRow, newCol = row + r, col + c
-                    if (newRow,newCol) not in visited and isvalid(newRow, newCol) and grid[newRow][newCol] == 1:
-                        q.append([newRow, newCol])
-                        islandOne.append([newRow, newCol])
-                        visited.add((newRow, newCol))
+        def invalid(r,c):
+            return r<0 or r==n or c<0 or c==n
         
-        # step-2, make BFS on islandOne until we get Island-2
-        numberOfMoves = 0
-        while islandOne:
-            size = len(islandOne)
-            for _ in range( size ):
-                row, col = islandOne.popleft()
-                for r, c in [[0, 1],[0, -1],[1, 0], [-1, 0]]:
-                    newRow, newCol = row + r, col + c
-
-                    if (newRow,newCol) not in visited and isvalid(newRow, newCol):
-                        # there are exactly 2 islands, so terminate here since Island-2 is found
-                        if grid[newRow][newCol] == 1:
-                            return numberOfMoves
-
-                        islandOne.append([newRow, newCol])
-                        visited.add((newRow, newCol))
-            numberOfMoves += 1
+        direct = [[0,1],[0,-1],[1,0],[-1,0]]
+        
+        visited = set()
+        
+        def dfs(r,c):
+            if invalid(r,c) or not grid[r][c] or (r,c) in visited:
+                return 
+            visited.add((r,c))
+            for e in direct:
+                dfs(r+e[0],c+e[1])
+        
+        def bfs():
+            ans = 0
+            q = deque(visited)
+            while q:
+                for i in range(len(q)):
+                    r,c = q.popleft()
+                    for e in direct:
+                        r1 = r+e[0]
+                        c1 = c+e[1]
+                        if invalid(r1,c1) or (r1,c1) in visited:
+                            continue
+                        if grid[r1][c1]:
+                            return ans
+                        q.append([r1,c1])
+                        visited.add((r1,c1))
+                ans+=1
+        
+        for i in range(n):
+            for j in range(n):
+                if grid[i][j]:
+                    dfs(i,j)
+                    return bfs()
+                
             
+        
