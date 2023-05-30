@@ -1,28 +1,16 @@
 class MyHashSet:
 
     def __init__(self):
-        self.s = []
+        self.s = defaultdict(int)
 
     def add(self, key: int) -> None:
-        if key not in self.s:
-            self.s.append(key)
+        self.s[key] = True
 
     def remove(self, key: int) -> None:
-        
-        idx = -1
-        for i in range(len(self.s)):
-            if self.s[i]==key:
-                idx = i
-                break
-        if idx!=-1:
-            self.s.pop(idx)
+        self.s[key] = False
 
     def contains(self, key: int) -> bool:
-        if key in self.s:
-            return True 
-        else:
-            return False
-        
+        return self.s[key] 
 
 
 # Your MyHashSet object will be instantiated and called as such:
