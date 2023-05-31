@@ -1,8 +1,8 @@
 class UndergroundSystem:
 
     def __init__(self):
-        self.journey = {}
-        self.history = {}
+        self.journey = defaultdict(set)
+        self.history = defaultdict(set)
         
 
     def checkIn(self, id: int, stationName: str, t: int) -> None:
