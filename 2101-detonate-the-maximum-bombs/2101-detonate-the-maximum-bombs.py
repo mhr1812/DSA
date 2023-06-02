@@ -5,11 +5,9 @@ class Solution:
         
         for i in range(n):
             for j in range(n):
-                if i==j:
-                    continue
-                if bombs[i][2] ** 2 >= (bombs[i][0] - bombs[j][0]) ** 2 + (bombs[i][1] - bombs[j][1]) ** 2:
-                    graph[i] += [j]
-
+                if i!=j:
+                    if bombs[i][2]*bombs[i][2] >= (bombs[i][1]-bombs[j][1])**2+(bombs[i][0]-bombs[j][0])**2:
+                        graph[i]+=[j]
         
         def dfs(node,visited):
             for child in graph[node]:
