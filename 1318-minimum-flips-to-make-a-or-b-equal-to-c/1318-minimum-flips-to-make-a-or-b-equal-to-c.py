@@ -1,9 +1,14 @@
 class Solution:
     def minFlips(self, a: int, b: int, c: int) -> int:
-        ans = 0
+        count = 0
         for i in range(31):
-            if (c>>i) & 1:
-                ans+=(a>>i)&1==0 and (b>>i)&1==0
+            mask = 1 << i
+            if (c & mask) == 0:
+                if (a & mask) > 0:
+                    count += 1
+                if (b & mask) > 0:
+                    count += 1
             else:
-                ans+=((a>>i)&1)+((b>>i)&1)
-        return ans
+                if (a & mask) == 0 and (b & mask) == 0:
+                    count += 1
+        return count
