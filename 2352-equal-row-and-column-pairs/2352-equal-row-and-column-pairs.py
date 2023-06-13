@@ -1,13 +1,9 @@
 class Solution:
     def equalPairs(self, grid: List[List[int]]) -> int:
-        n = len(grid)
-        cpy = [[0 for j in range(n)]for i in range(n)]
-        for i in range(n):
-            for j in range(n):
-                cpy[i][j] = grid[j][i]
-        ans = 0
+        d = defaultdict(int)
         for e in grid:
-            for f in cpy:
-                if e==f:
-                    ans+=1 
+            d[tuple(e)] +=1
+        ans = 0
+        for e in zip(*grid):
+            ans+=d[tuple(e)]
         return ans
