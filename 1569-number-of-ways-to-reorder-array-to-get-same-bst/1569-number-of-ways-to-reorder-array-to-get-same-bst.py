@@ -6,6 +6,6 @@ class Solution:
                 return 1
             left = [e for e in nums if e<nums[0]]
             right = [e for e in nums if e>nums[0]]
-            return comb(len(nums)-1,len(left))*recur(left)*recur(right)
+            return comb(len(nums)-1,len(right))*recur(left)*recur(right)
         ans = (recur(nums) -1)%mod
         return ans
