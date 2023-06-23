@@ -10,6 +10,6 @@ class Solution:
         
         for r in matrix:
             for j in range(n//2):
-                r[j], r[~j] = r[~j], r[j]
+                r[j], r[-j-1] = r[-j-1], r[j]
         
         
