@@ -6,7 +6,8 @@ class Solution:
         
         for i in range(101):
             val = num1 - i*num2
-            if countSetBits(val)<=i and i<=val:
-                return i
+            if val<i or countSetBits(val)>i:
+                continue
+            return i
         
         return -1
