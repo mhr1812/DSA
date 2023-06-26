@@ -12,14 +12,13 @@ class Solution:
                 heapq.heappush(pq2,costs[j])
                 j-=1
                 
+            
             t1 = pq1[0] if pq1 else float('inf')
             t2 = pq2[0] if pq2 else float('inf')
 
             if t1 <= t2:
-                ans += t1
-                heapq.heappop(pq1)
+                ans += heapq.heappop(pq1)
             else:
-                ans += t2
-                heapq.heappop(pq2)
+                ans += heapq.heappop(pq2)
                 
         return ans
