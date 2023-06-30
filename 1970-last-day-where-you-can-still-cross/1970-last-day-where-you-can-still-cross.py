@@ -1,31 +1,45 @@
+class UnionFind:
+
+    def __init__(self, n):
+        self.root = list(range(n))
+        self.size = [1] * n
+        
+    def find(self, x):
+        if self.root[x] != x:
+            self.root[x] = self.find(self.root[x])
+        return self.root[x]
+    
+    def union(self, x, y):
+        root_lil, root_big = self.find(x), self.find(y)
+        if self.size[root_lil] > self.size[root_big]:
+            root_lil, root_big = root_big, root_lil
+        self.root[root_lil] = root_big
+        self.size[root_big] = self.size[root_lil]
+
+
 class Solution:
+
     def latestDayToCross(self, row: int, col: int, cells: List[List[int]]) -> int:
-        def bfs(day):
-            arr = [[0 for j in range(col)]for i in range(row)]
-            dr = [[1,0],[-1,0],[0,1],[0,-1]]
-            q = deque()
-            for i in range(day):
-                arr[cells[i][0]-1][cells[i][1]-1] = 1
-            for j in range(col):
-                if arr[0][j]==0:
-                    q.append([0,j])
-                    arr[0][j] = -1
-            while q:
-                r,c = q.popleft()
-                if r==row-1:
-                    return True
-                for x1,y1 in dr:
-                    if 0<=r+x1<row and 0<=c+y1<col and arr[r+x1][c+y1]==0:
-                        q.append([r+x1,c+y1])
-                        arr[r+x1][c+y1]=-1
-            return False
+        
+        dsu = UnionFind(row * col + 2)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        grid = [[0] * col for _ in range(row)]
+
+        for i, (r, c) in enumerate(cells):
+            r, c = r - 1, c - 1
+            dsu_index = r * col + c + 1
+            grid[r][c] = 1
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < row and 0 <= nc < col and grid[nr][nc]:
+                    dsu.union(dsu_index, nr * col + nc + 1)
+                
+            if c == 0:
+                dsu.union(dsu_index, 0)
             
+            if c == col - 1:
+                dsu.union(dsu_index, row * col + 1)
             
-        left,right = 1, row*col
-        while left<right:
-            mid = right - (right - left) // 2
-            if bfs(mid):
-                left = mid
-            else:
-                right = mid-1
-        return left
+            if dsu.find(0) == dsu.find(row * col + 1):
+                return i
