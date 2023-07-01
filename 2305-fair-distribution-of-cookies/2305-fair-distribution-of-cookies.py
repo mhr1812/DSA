@@ -1,18 +1,17 @@
 class Solution:
     def distributeCookies(self, cookies: List[int], k: int) -> int:
-        ans = float('inf')
+        n = len(cookies)
         arr = [0 for i in range(k)]
-        def recur(i):
-            nonlocal ans,arr
-            if i==len(cookies):
-                ans = min(ans,max(arr))
-                return 
-            if ans<=max(arr):
-                return 
+        ans = [float('inf')]
+        def dfs(i):
+            if i==n:
+                ans[0] = min(ans[0],max(arr))
+                return
             for j in range(k):
                 arr[j]+=cookies[i]
-                recur(i+1)
+                dfs(i+1)
                 arr[j]-=cookies[i]
-            
-        recur(0)
-        return ans
+                if arr[j]==0:
+                    break
+        dfs(0)
+        return ans[0]
