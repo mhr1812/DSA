@@ -1,18 +1,18 @@
 class Solution:
-    def distributeCookies(self, cookies: List[int], k: int) -> int:
+    def distributeCookies(self, cookies, k):
         n = len(cookies)
-        arr = [0 for i in range(k)]
-        ans = float('inf')
+        v = [0] * k
+        res = [float('inf')]
         def dfs(i):
-            nonlocal ans
-            if i==n:
-                ans = min(ans,max(arr))
-                return
+            if i == n:
+                m = max(v)
+                res[0] = min(res[0], m)
+                return 
             for j in range(k):
-                arr[j]+=cookies[i]
-                dfs(i+1)
-                arr[j]-=cookies[i]
-                if arr[j]==0:
+                v[j] += cookies[i]
+                dfs(i + 1)
+                v[j] -= cookies[i]
+                if v[j] == 0:
                     break
         dfs(0)
-        return ans
+        return res[0]
