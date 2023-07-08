@@ -1,38 +1,23 @@
 class Solution:
-    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        graph = [[] for _ in range(numCourses)]
+        indegrees = [0 for _ in range(numCourses)]
 
-        # build adj_lst
-        adj_list = [[] for i in range(numCourses)]
         for pre in prerequisites:
-            adj_list[pre[1]].append(pre[0])
-
-        visit = [-1 for i in range(numCourses)] # -1 not yet visit, 1 visit, 0, processing in this DFS
-
-        def DFS(index):
-            
-            edges = adj_list[index]
-            visit[index] = 0
-            for vertex in edges:
-                if visit[vertex] == 1:
-                    continue
-                elif visit[vertex] == -1:
-                    if not DFS(vertex):
-                        return False
-                else:
-                    return False
-
-            visit[index] = 1
-            return True
-
-        result = True
-
-        for i in range(len(adj_list)):
-
-            if visit[i] == 1:
-                continue
-            else:
-                result = DFS(i)
-                if not result:
-                    return False
+            a, b = tuple(pre)
+            graph[b].append(a)
+            indegrees[a] += 1
         
-        return True
+        stack = [i for i in range(numCourses) if indegrees[i] == 0]
+        visited = 0
+
+        while stack:
+            node = stack.pop()
+            visited += 1
+
+            for next_node in graph[node]:
+                indegrees[next_node] -= 1
+                if indegrees[next_node] == 0:
+                    stack.append(next_node)
+        
+        return visited == numCourses
