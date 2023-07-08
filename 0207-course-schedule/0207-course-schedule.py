@@ -1,26 +1,38 @@
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        def dfs(sv,visited,path):
-            visited[sv]=1
-            path[sv]=1
-            for u in adj[sv]:
-                if visited[u]==0:
-                    if dfs(u,visited,path):
-                        return True
-                elif path[u]==1:
-                    return True
-            path[sv]=0
-            return False
-        
-        adj=[[] for i in range(numCourses)]
-        n=len(prerequisites)
-        for i in range(n):
-            u,v=prerequisites[i][0],prerequisites[i][1]
-            adj[v].append(u)
-        visited=[0]*numCourses
-        path=[0]*numCourses
-        for i in range(numCourses):
-            if visited[i]==0:
-                if dfs(i,visited,path):
+
+        # build adj_lst
+        adj_list = [[] for i in range(numCourses)]
+        for pre in prerequisites:
+            adj_list[pre[1]].append(pre[0])
+
+        visit = [-1 for i in range(numCourses)] # -1 not yet visit, 1 visit, 0, processing in this DFS
+
+        def DFS(index):
+            
+            edges = adj_list[index]
+            visit[index] = 0
+            for vertex in edges:
+                if visit[vertex] == 1:
+                    continue
+                elif visit[vertex] == -1:
+                    if not DFS(vertex):
+                        return False
+                else:
                     return False
+
+            visit[index] = 1
+            return True
+
+        result = True
+
+        for i in range(len(adj_list)):
+
+            if visit[i] == 1:
+                continue
+            else:
+                result = DFS(i)
+                if not result:
+                    return False
+        
         return True
