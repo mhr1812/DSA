@@ -1,26 +1,26 @@
 class Solution:
     def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        def dfs(sv,visited,path):
+            visited[sv]=1
+            path[sv]=1
+            for u in adj[sv]:
+                if visited[u]==0:
+                    if dfs(u,visited,path):
+                        return True
+                elif path[u]==1:
+                    return True
+            path[sv]=0
+            return False
+        
         adj=[[] for i in range(numCourses)]
-        for u,v in prerequisites:
+        n=len(prerequisites)
+        for i in range(n):
+            u,v=prerequisites[i][0],prerequisites[i][1]
             adj[v].append(u)
         visited=[0]*numCourses
-        indeg=[0]*numCourses
-        res=[]
-        q=deque()
+        path=[0]*numCourses
         for i in range(numCourses):
-            for j in adj[i]:
-                indeg[j]+=1
-        for i in range(numCourses):
-            if indeg[i]==0:
-                q.append(i)
-        while q:
-            u=q.popleft()
-            res.append(u)
-            for i in adj[u]:
-                if indeg[i]!=0:
-                    indeg[i]-=1
-                if indeg[i]==0:
-                    q.append(i)
-        if len(res)!=numCourses:
-            return False
+            if visited[i]==0:
+                if dfs(i,visited,path):
+                    return False
         return True
