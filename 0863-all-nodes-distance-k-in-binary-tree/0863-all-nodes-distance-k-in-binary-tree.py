@@ -7,35 +7,32 @@
 
 class Solution:
     def distanceK(self, root: TreeNode, target: TreeNode, k: int) -> List[int]:
-        parent = {}
-        q = deque()
-        q.append(root)
+        graph = collections.defaultdict(list)
+        q = collections.deque([root])
         while q:
-            size = len(q)
-            for _ in range(size):
-                curr = q.popleft()
-                if curr.left:
-                    parent[curr.left.val] = curr
-                    q.append(curr.left)
-                if curr.right:
-                    parent[curr.right.val] = curr
-                    q.append(curr.right)
-        visited = {}
-        q.append(target)
-        while k>0 and q:
-            size = len(q)
-            for _ in range(size):
-                curr = q.popleft()
-                visited[curr.val] = 1
-                if curr.left and curr.left.val not in visited:
-                    q.append(curr.left)
-                if curr.right and curr.right.val not in visited:
-                    q.append(curr.right)
-                if curr.val in parent and parent[curr.val].val not in visited:
-                    q.append(parent[curr.val])
-            k-=1 
+            node = q.popleft()
+            if node.left: 
+                q.append(node.left)
+                graph[node].append(node.left)
+                graph[node.left].append(node)
+
+            if node.right: 
+                q.append(node.right)
+                graph[node].append(node.right)
+                graph[node.right].append(node)
+
+        q = collections.deque([(target, 0)])
+        visited = set([target])
         ans = []
         while q:
-            curr = q.popleft()
-            ans.append(curr.val)
+            node, d = q.popleft()
+            if d == k:
+                ans.append(node.val)
+                continue
+
+            for nei in graph[node]:
+                if nei not in visited:
+                    visited.add(nei)
+                    q.append((nei, d+1))
+
         return ans
