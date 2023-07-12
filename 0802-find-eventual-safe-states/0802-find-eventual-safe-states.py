@@ -1,5 +1,4 @@
 class Solution:
-    
     def dfs(self,graph,vis,dfs_vis,cycle_ele,s):
         vis[s]=True
         dfs_vis[s]=True
