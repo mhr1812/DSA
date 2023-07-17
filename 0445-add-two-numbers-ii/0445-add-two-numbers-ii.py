@@ -4,44 +4,37 @@
 #         self.val = val
 #         self.next = next
 class Solution:
-    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        if not head:
-            return head
-        prev = None
-        curr = head
-        while curr.next:
-            temp = curr.next
+    def reverseLinkedList(self, l):
+        prev, curr = None, l
+
+        while curr:
+            nxt = curr.next
             curr.next = prev
             prev = curr
-            curr = temp
-        curr.next = prev
-        return curr
-    
-    def addTwoNumbers_simple(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
-        ret_list = ListNode()
-        curr = ret_list
-        carry: bool = False
-        mid_sum: int
-        while carry or l1 or l2:
-            curr.next = ListNode()
-            curr = curr.next
-            mid_sum = 0
-            if l1:
-                mid_sum += l1.val
-                l1 = l1.next
-            if l2:
-                mid_sum += l2.val
-                l2 = l2.next
-            if carry:
-                mid_sum += 1
-            carry = (mid_sum > 9)
-            curr.val = mid_sum%10
-        curr.next = None
-
-        return ret_list.next
-    
+            curr = nxt 
+        
+        return prev
     def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
-        l1 = self.reverseList(l1)
-        l2 = self.reverseList(l2)
-        return self.reverseList(self.addTwoNumbers_simple(l1,l2))
+        l1 = self.reverseLinkedList(l1)
+        l2 = self.reverseLinkedList(l2)
 
+        dummy = ListNode()
+        curr = dummy
+        carry = 0 
+
+        while l1 or l2 or carry:
+            v1 = l1.val if l1 else 0
+            v2 = l2.val if l2 else 0 
+
+            total = v1 + v2 + carry
+            carry = total // 10 
+            total %= 10 
+
+            curr.next = ListNode(total)
+
+            curr = curr.next 
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None 
+
+        head = dummy.next
+        return self.reverseLinkedList(head)
