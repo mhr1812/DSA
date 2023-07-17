@@ -4,39 +4,44 @@
 #         self.val = val
 #         self.next = next
 class Solution:
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return head
+        prev = None
+        curr = head
+        while curr.next:
+            temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = temp
+        curr.next = prev
+        return curr
+    
+    def addTwoNumbers_simple(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
+        ret_list = ListNode()
+        curr = ret_list
+        carry: bool = False
+        mid_sum: int
+        while carry or l1 or l2:
+            curr.next = ListNode()
+            curr = curr.next
+            mid_sum = 0
+            if l1:
+                mid_sum += l1.val
+                l1 = l1.next
+            if l2:
+                mid_sum += l2.val
+                l2 = l2.next
+            if carry:
+                mid_sum += 1
+            carry = (mid_sum > 9)
+            curr.val = mid_sum%10
+        curr.next = None
+
+        return ret_list.next
+    
     def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:
-        stack1, stack2 = [], []
+        l1 = self.reverseList(l1)
+        l2 = self.reverseList(l2)
+        return self.reverseList(self.addTwoNumbers_simple(l1,l2))
 
-        # Push values of l1 into stack1
-        while l1:
-            stack1.append(l1.val)
-            l1 = l1.next
-
-        # Push values of l2 into stack2
-        while l2:
-            stack2.append(l2.val)
-            l2 = l2.next
-
-        carry = 0
-        result = None
-
-        while stack1 or stack2 or carry:
-            sum_val = carry
-
-            # Add the top values from stack1 and stack2, if available
-            if stack1:
-                sum_val += stack1.pop()
-            if stack2:
-                sum_val += stack2.pop()
-
-            # Create a new node with the sum % 10
-            node = ListNode(sum_val % 10)
-
-            # Set the new node as the next node of the result list
-            node.next = result
-            result = node
-
-            # Update the carry
-            carry = sum_val // 10
-
-        return result
