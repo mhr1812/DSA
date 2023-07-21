@@ -1,23 +1,18 @@
 class Solution:
     def findNumberOfLIS(self, nums: List[int]) -> int:
-        decks, ends_decks, paths = [], [], []
-        for num in nums:
-            deck_idx = bisect.bisect_left(ends_decks, num)
-            n_paths = 1
-            if deck_idx > 0:
-                l = bisect.bisect(decks[deck_idx-1], -num)
-                n_paths = paths[deck_idx-1][-1] - paths[deck_idx-1][l]
-                
+        n = len(nums)
+        lengths = [1] * n  # lengths[i] stores the length of the longest increasing subsequence ending at index i
+        counts = [1] * n   # counts[i] stores the count of the longest increasing subsequences ending at index i
 
-            if deck_idx == len(decks):
-                decks.append([-num])
-                ends_decks.append(num)
-                paths.append([0,n_paths])
-                
-            else:
-                decks[deck_idx].append(-num)
-                ends_decks[deck_idx] = num
-                paths[deck_idx].append(n_paths + paths[deck_idx][-1])
-                
+        for i in range(n):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    if lengths[j] + 1 > lengths[i]:
+                        lengths[i] = lengths[j] + 1
+                        counts[i] = counts[j]
+                    elif lengths[j] + 1 == lengths[i]:
+                        counts[i] += counts[j]
 
-        return paths[-1][-1]
+        max_length = max(lengths)
+        result = sum(count for length, count in zip(lengths, counts) if length == max_length)
+        return result
