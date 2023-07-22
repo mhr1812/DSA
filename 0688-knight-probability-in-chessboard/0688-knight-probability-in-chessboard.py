@@ -1,57 +1,23 @@
+NEXT_HOP_PROB = 1 / 8
+
 class Solution:
-    def knightProbability(self, n: int, k: int, row: int, column: int) -> float:
-
-        tNodes = 0
-        cache = []
-        for i in range(k):
-            cache.append([[-1] * n for _ in range(n)])
-        
-        moves = [ (2,1),(2,-1),(-2,1),(-2,-1), (1,2),(1,-2),(-1,2),(-1,-2) ]
-
-        def inRange(t):
-            return t>=0 and t<n
-
-        def dfs(curK, r, c):
-            if curK==k:
-                #nonlocal tNodes
-                #tNodes += 1
-                return 1
-
-            #curK += 1
-            tmp = 0
-
-            for rMove, cMove in moves:
-                rp = r + rMove
-                cp = c + cMove
-
-                if inRange(rp) and inRange(cp):
-
-                    #see if result is already cached
-                    if cache[curK][rp][cp]==-1:
-                        z = dfs(curK+1, rp, cp)
-
-                        #add z in cache
-                        for x, y in [(rp, cp), (cp, rp)]:
-                            cache[curK][x][y] = z
-
-                            #vertical image
-                            cache[curK][x][n-1-y] = z
-
-                            #horizontal image
-                            cache[curK][n-1-x][y] = z
-
-                            #other diagonal image
-                            cache[curK][n-1-y][n-1-x] = z
-
-                    else:
-                        z = cache[curK][rp][cp]
-
-                    tmp += z
-
-            return tmp
-
-        tNodes = dfs(0, row, column)
-        
-        print(tNodes)
-        res = tNodes * pow(0.125, k)
-        return res
+    def knightProbability(self, size, moves, r, c):
+        # use a dict to represent the board because the distribution is likely sparse
+        probs = {(r, c): 1}
+        for i in range(moves):
+            new_probs = {}
+            for coord, prob in probs.items():
+                for new_coord in self._next_position_on_board(coord, size):
+                    if new_coord not in new_probs:
+                        new_probs[new_coord] = 0
+                    new_probs[new_coord] += NEXT_HOP_PROB * prob
+            probs = new_probs
+        return sum(probs.values())
+    
+    def _next_position_on_board(self, coord, size):
+        result = []
+        for delta in ((1, 2), (1, -2), (-1, 2), (-1, -2), (2, 1), (2, -1), (-2, 1), (-2, -1)):
+            x, y = coord[0] + delta[0], coord[1] + delta[1]
+            if 0 <= x < size and 0 <= y < size:
+                result.append((x, y))
+        return result
