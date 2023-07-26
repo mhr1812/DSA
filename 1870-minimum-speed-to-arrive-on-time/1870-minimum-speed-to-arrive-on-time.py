@@ -1,27 +1,25 @@
+from numpy import array, ceil, sum
+
 class Solution:
     def minSpeedOnTime(self, dist: List[int], hour: float) -> int:
-        if hour < len(dist) - 1:
+
+        def check(speed: float) -> bool:
+            time = array(dist) / speed
+            time = ceil(time)
+            time[-1] = dist[-1] / speed
+            return sum(time) <= hour
+
+        # Check that the solution exists
+        if len(dist) > ceil(hour):
             return -1
 
-        l, r = 1, 10**7
-        ans = -1
-
-        while l <= r:
-            m = (l + r) // 2
-            if self.check(dist, hour, m):
-                ans = m
-                r = m - 1
+        # Binary search
+        unfeasible, solution = 0, 10**7
+        while solution - unfeasible > 1:
+            mid = (unfeasible + solution) // 2
+            if check(mid):
+                solution = mid
             else:
-                l = m + 1
+                unfeasible = mid
 
-        return ans
-
-    def check(self, dist: List[int], hour: float, speed: int) -> bool:
-        time = 0.0
-        i = 0
-        while time <= hour and i < len(dist) - 1:
-            time += math.ceil(dist[i] / speed)
-            i += 1
-
-        time += dist[-1] / speed
-        return time <= hour
+        return solution
