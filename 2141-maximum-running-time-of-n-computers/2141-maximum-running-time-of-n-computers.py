@@ -1,17 +1,25 @@
 class Solution:
-    def maxRunTime(self, n: int, batteries: List[int]) -> int:
-        left=0
-        right=sum(batteries)//n+1
+    def maxRunTime(self, n: int, a: List[int]) -> int:
+        if len(a) < n:
+            return 0
+        if len(a) == n:
+            return min(a)
         
-        def check(time):
-            return sum(min(time,b) for b in batteries)>=n*time
+        s = sum(a)
+        if n == 1:
+            return sum(a)
+        
+        t = s // n
+        if t >= max(a):
+            return t
 
-        while left<=right:
-            mid=(left+right)//2
-            if check(mid):
-                left=mid+1
-
-            else:
-                right=mid-1
-
-        return right          
+        m = len(a)
+        a = sorted(Counter(a).items())
+        p = m
+        q = s
+        for i, j in a[::-1]:
+            p -= j
+            q -= i * j
+            if q + i * (m - p) >= i * n:
+                return (q + i * j) // (n - m + p + j)
+        return 0       
