@@ -9,11 +9,11 @@ class Solution:
         if n == 0:
             return []
         
-        memo = {}
+        # memo = {}
 
         def generate_trees(start, end):
-            if (start, end) in memo:
-                return memo[(start, end)]
+            # if (start, end) in memo:
+            #     return memo[(start, end)]
             
             trees = []
             if start > end:
@@ -29,7 +29,7 @@ class Solution:
                         root = TreeNode(root_val, left_tree, right_tree)
                         trees.append(root)
             
-            memo[(start, end)] = trees
+            # memo[(start, end)] = trees
             return trees
 
         return generate_trees(1, n)
