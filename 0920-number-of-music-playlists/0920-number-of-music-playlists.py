@@ -1,12 +1,19 @@
 class Solution:
     def numMusicPlaylists(self, n: int, goal: int, k: int) -> int:
-        mod = 10**9 + 7
-        dp = [[0 for _ in range(n + 1)] for _ in range(goal + 1)]
-        dp[0][0] = 1
-        for i in range(1, goal + 1):
-            for j in range(1, min(i, n) + 1):
-                dp[i][j] = dp[i-1][j-1] * (n - j + 1) % mod
-                if j > k:
-                    dp[i][j] = (dp[i][j] + dp[i-1][j] * (j-k)) % mod
-        
-        return dp[goal][n]
+        MOD = 10**9 + 7
+        res, c = 0, 1
+
+        def inv(x):
+            return pow(x, MOD - 2, MOD)
+
+        for x in range(1, n - k):
+            c = (c * -x) % MOD
+        c = inv(c)
+
+        for j in range(1, n - k + 1):
+            res += pow(j, goal - k - 1, MOD) * c
+            c = c * (j - (n - k)) % MOD * inv(j) % MOD
+
+        for j in range(1, n + 1):
+            res = res * j % MOD
+        return res
