@@ -1,31 +1,21 @@
 class Solution:
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
-        verticalHigh = len(matrix)-1
-        verticalLow = 0
+        if not matrix: return False
+        N = len(matrix[0])
+        M = len(matrix)
+        def binarysearch(row):
+            l,r = 0,N-1
 
-
-        horizontalHigh = len(matrix[0])-1
-        horizontalLow = 0
-
-
-        while verticalLow<=verticalHigh:
-            
-            verticalMid = (verticalHigh+verticalLow)//2
-            if target > matrix[verticalMid][horizontalHigh]:
-                verticalLow = verticalMid +1
-            elif target < matrix[verticalMid][horizontalLow]:
-                verticalHigh = verticalMid -1
-            else:
-                break
-        searchRow = verticalMid
+            while l<=r:
+                mid = (l+r)//2
+                if matrix[row][mid]==target:
+                    return True
+                elif matrix[row][mid]<target:
+                    l = mid+1
+                else:
+                    r = mid-1
+            return False
         
-        while horizontalLow<=horizontalHigh:
-            horizontalMid = (horizontalHigh + horizontalLow)//2
-            print(matrix[searchRow][horizontalMid])
-            if matrix[searchRow][horizontalMid] == target:
-                return True
-            elif matrix[searchRow][horizontalMid] < target:
-                horizontalLow = horizontalMid + 1
-            elif  matrix[searchRow][horizontalMid] > target:
-                horizontalHigh = horizontalMid -1
+        for row in range(M):
+            if binarysearch(row): return True
         return False
