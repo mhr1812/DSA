@@ -1,12 +1,17 @@
 class Solution:
     def letterCasePermutation(self, s: str) -> List[str]:
-        ans,n = [],len(s)
-        def recur(sub="",i=0):
-            if len(sub)==n:
-                ans.append(sub)
+
+        def backtrack(s):
+            if not s:
+                return ['']
+            perm = backtrack(s[1:])
+            if s[0].isdigit():
+                return map(lambda x: s[0] + x, perm)
             else:
-                if s[i].isalpha():
-                    recur(sub+s[i].swapcase(),i+1)
-                recur(sub+s[i],i+1)
-        recur()
-        return ans
+                res = []
+                for word in perm:
+                    res.append(s[0].lower() + word)
+                    res.append(s[0].upper() + word)
+                return res
+
+        return backtrack(s)
