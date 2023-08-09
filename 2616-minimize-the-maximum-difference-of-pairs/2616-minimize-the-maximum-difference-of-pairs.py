@@ -5,7 +5,7 @@ class Solution:
         mini_max_diff = 0
         maxi_max_diff = nums[-1]-nums[0]
         
-        while mini_max_diff<maxi_max_diff:
+        while mini_max_diff<=maxi_max_diff:
             mid = (mini_max_diff+maxi_max_diff)//2
             c,i = 0,1
             
@@ -16,7 +16,7 @@ class Solution:
                 i+=1
             
             if c>=p:
-                maxi_max_diff = mid
+                maxi_max_diff = mid-1
             else:
                 mini_max_diff = mid+1
             
