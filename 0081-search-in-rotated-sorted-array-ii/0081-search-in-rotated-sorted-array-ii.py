@@ -1,23 +1,34 @@
 class Solution:
     def search(self, nums: List[int], target: int) -> bool:
         n = len(nums)
-        l,r = 0,n-1
-        while l<=r:
-            while l<r and nums[l]==nums[l+1]:
-                l+=1
-            while l<r and nums[r]==nums[r-1]:
-                r-=1
-            mid = (l+r)//2
-            if nums[mid]==target:
-                return True
-            elif nums[l]<=nums[mid]:
-                if nums[l]<=target<=nums[mid]:
-                    r = mid-1
-                else:
-                    l = mid+1
+        if n==0:
+            return False
+        if n==1:
+            return nums[0] == target
+        if n==2:
+            return nums[0] == target or nums[1] == target
+        
+        m = n//2
+        if nums[m] == target:
+            return True
+        
+        if nums[0] < nums[m]:
+            if nums[m]>target and nums[0]<=target:
+                return self.search(nums[:m],target)
             else:
-                if nums[mid]<=target<=nums[r]:
-                    l = mid+1
-                else:
-                    r = mid-1
-        return False
+                return self.search(nums[m+1:],target)
+        elif nums[0] > nums[m]:
+            if nums[m]<target and nums[n-1]>=target:
+                return self.search(nums[m+1:],target)
+            else:
+                return self.search(nums[:m],target)
+        else:
+            i=1
+            while True:
+                if nums[i]!=nums[0]:
+                    return self.search(nums[i:m],target)
+                if nums[m+i]!=nums[m]:
+                    return self.search(nums[m+i:],target)
+                if i==m:
+                    return False
+                i+=1
