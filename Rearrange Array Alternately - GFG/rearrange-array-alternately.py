@@ -4,18 +4,18 @@ class Solution:
     #Function to rearrange  the array elements alternately.
     def rearrange(self,arr, n): 
         ##Your code here
+        l,r = 0,n-1
         mx = arr[n-1]+1
-        high,low = n-1,0
         for i in range(n):
             if i%2==0:
-                arr[i] = arr[i]+(arr[high]%mx)*mx
-                high-=1
+                arr[i] += (arr[r]%mx)*mx
+                r-=1
             else:
-                arr[i] = arr[i]+(arr[low]%mx)*mx
-                low+=1
+                arr[i]+=(arr[l]%mx)*mx
+                l+=1
         for i in range(n):
             arr[i]//=mx
-            
+        return arr
 
 
 #{ 
