@@ -1,54 +1,51 @@
 class Solution:
-    def sortItems(self, n: int, m: int, group: List[int], beforeItems: List[List[int]]) -> List[int]:
-        groupId = m
+    def sortItems(self, n, m, group, beforeItems):
+        group_id = m
         for i in range(n):
-            if group[i] == -1:
-                group[i] = groupId
-                groupId += 1
+            if group[i]==-1:
+                group[i] = group_id
+                group_id += 1
+                
+        item_g = [[] for _ in range(n)]
+        item_d = [0]*n
         
-        itemGraph = defaultdict(list)
-        itemIndegree = [0] * n
-        groupGraph = defaultdict(list)  # Initialize groupGraph
-        groupIndegree = [0] * groupId
+        g_g = [[] for _ in range(group_id)]
+        g_d = [0]*group_id
         
         for i in range(n):
-            for prev in beforeItems[i]:
-                itemGraph[prev].append(i)
-                itemIndegree[i] += 1
-                if group[i] != group[prev]:
-                    groupGraph[group[prev]].append(group[i])
-                    groupIndegree[group[i]] += 1
+            for j in beforeItems[i]:
+                item_g[j].append(i)
+                item_d[i] += 1
+                
+                if group[i]!=group[j]:
+                    g_g[group[j]].append(group[i])
+                    g_d[group[i]] += 1
+                    
+        def topologicalSort(graph, indegree):
+            visited = []
+            q = [node for node in range(len(graph)) if indegree[node] == 0]
+            while q:
+                cur = q.pop()
+                visited.append(cur)
+                for neib in graph[cur]:
+                    indegree[neib] -= 1
+                    if indegree[neib] == 0:
+                        q.append(neib)
+            return visited if len(visited) == len(graph) else []
         
-        itemOrder = self.topologicalSort(itemGraph, itemIndegree)
-        groupOrder = self.topologicalSort(groupGraph, groupIndegree)
+        item = topologicalSort(item_g, item_d)
+        g = topologicalSort(g_g, g_d)
+        #print(item, g, item_g, g_g)
         
-        if not itemOrder or not groupOrder:
+        if not item or not g:
             return []
         
-        orderedGroups = defaultdict(list)
-        for item in itemOrder:
-            orderedGroups[group[item]].append(item)
-        
-        answerList = []
-        for groupIndex in groupOrder:
-            answerList.extend(orderedGroups[groupIndex])
-        
-        return answerList
-    
-    def topologicalSort(self, graph: Dict[int, List[int]], indegree: List[int]) -> List[int]:
-        visited = []
-        stk = []
-        for i in range(len(indegree)):
-            if indegree[i] == 0:
-                stk.append(i)
-        
-        while stk:
-            curr = stk.pop()
-            visited.append(curr)
+        tmp = defaultdict(list)
+        for i in item:
+            tmp[group[i]].append(i)
             
-            for n in graph[curr]:
-                indegree[n] -= 1
-                if indegree[n] == 0:
-                    stk.append(n)
-        
-        return visited if len(visited) == len(graph) else []
+        ans = []
+        for i in g:
+            ans += tmp[i]
+            
+        return ans
