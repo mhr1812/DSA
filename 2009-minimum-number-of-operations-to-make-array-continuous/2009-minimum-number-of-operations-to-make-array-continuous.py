@@ -1,14 +1,19 @@
-class Solution:
-    def minOperations(self, nums: List[int]) -> int:
-        length = len(nums)
-        min_operations = length
-        unique_nums = sorted(set(nums))
-        right = 0
+sys.stdout = open('user.out', 'w')
+nums = None
+for line in map(loads, stdin):
+    if isinstance(line, list):
+        nums = line
+        n = len(nums)
+        ans = n
+        new_nums = sorted(set(nums))
+        j = 0
         
-        for left in range(len(unique_nums)):
-            while right < len(unique_nums) and unique_nums[right] < unique_nums[left] + length:
-                right += 1
+        for i in range(len(new_nums)):
+            while j < len(new_nums) and new_nums[j] < new_nums[i] + n:
+                j += 1
             
-            min_operations = min(min_operations, length - (right - left))
+            count = j - i
+            ans = min(ans, n - count)
 
-        return min_operations
+        print(ans)
+        nums = None
