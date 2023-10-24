@@ -1,13 +1,20 @@
 class Solution:
     def largestValues(self, root: Optional[TreeNode]) -> List[int]:
-
-        max_value = []
-
-        queue = [root]
-
-        while any(queue):
-
-            max_value.append(max(node.val for node in queue))
-            queue = [child for node in queue for child in (node.left,node.right) if child]
-
-        return max_value
+        result = []
+        if not root:
+            return []
+        queue = collections.deque()
+        queue.append(root)
+        while queue:
+            n = len(queue)
+            largest = float('-inf')
+            for _ in range(n):
+                cur = queue.popleft()
+                largest = max(cur.val, largest)
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            result.append(largest)
+        
+        return result
